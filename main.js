@@ -146,7 +146,6 @@ function setInfo(elem, file) {
   canvas.width = image.width;
   canvas.height = image.height;
   ctx.drawImage(image, 0, 0, image.width, image.height);
-  document.body.appendChild(canvas);
   canvas.toBlob(
     (blob) => {
       blob.name = "Lanzarote, Spain";
