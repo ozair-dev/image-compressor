@@ -28,26 +28,39 @@ html, body{
   user-select: none;
 }
 
-.app__original-image{
+.app__images-div{
   margin-top: 1rem;
   width: 85%;
   height: 50vh;
-  background-size: cover;
-  background-position: left;
-  background-color: hsl(40, 100%, 69%);
   position: relative;
+  background-color: hsl(40, 100%, 69%);
 }
 
-.app__compressed-image{
+.app__original-image{
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+}
+
+.app__compressed-image-frame{
   display: none;
   position: absolute;
   top: 0;
   right: 0;
   width: 50%;
   height: 100%;
-  background-size: cover;
-  background-position: right;
   border-left: black 2px solid;
+  overflow: hidden;
+}
+
+.app__compressed-image{
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
 }
 
 .app__image-info{
@@ -62,15 +75,15 @@ html, body{
   bottom: 0rem;
 }
 
-.app__original-image.show .app__image-info{
+.app__images-div.show .app__image-info{
   display: initial;
 }
 
-.app__compressed-image__resize-button{
+.app__compressed-image-frame__resize-button{
   margin: 0;
   position: absolute;
   top: 50%;
-  left: 0;
+  left: 50%;
   transform: translate(-50%, -50%);
   font-size: 2.5rem;
   width: 4rem;
@@ -80,10 +93,14 @@ html, body{
   border-radius: 50%;
   border: 2px solid black;
   background-color: rgb(255 255 255);
+  display: none;
   cursor: pointer;
 }
+.app__images-div.show .app__compressed-image-frame__resize-button{
+  display: initial;
+}
 
-.app__original-image.show .app__compressed-image{
+.app__images-div.show .app__compressed-image-frame{
   display: initial;
 }
 
@@ -100,18 +117,20 @@ html, body{
 }
 
 
-.app__original-image.show::before{
+.app__images-div.show .app__original-image::before{
   content: "Original";
   top: 0.5rem;
   left: 0.5rem;
 }
 
-.app__compressed-image::before{
+.app__compressed-image-frame::before{
   content: "Compressed";
   top: 0.5rem;
   right: 0.5rem;
+  z-index: 1;
 }
-.app__original-image.show::before, .app__compressed-image::before{
+.app__images-div.show .app__original-image::before,
+.app__compressed-image-frame::before{
   color: white;
   position: absolute;
   font-size: 2rem;

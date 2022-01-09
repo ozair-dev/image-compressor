@@ -1,13 +1,17 @@
+const imagesDiv = document.querySelector(".app__images-div");
 const originalImage = document.querySelector(".app__original-image");
 const originalImageInfo = document.querySelector(
   ".app__original-image > .app__image-info"
 );
+const compressedImageFrame = document.querySelector(
+  ".app__compressed-image-frame"
+);
 const compressedImage = document.querySelector(".app__compressed-image");
 const resizeButton = document.querySelector(
-  ".app__compressed-image__resize-button"
+  ".app__compressed-image-frame__resize-button"
 );
 const compressedImageInfo = document.querySelector(
-  ".app__compressed-image > .app__image-info"
+  ".app__compressed-image-frame > .app__image-info"
 );
 const downloadButton = document.querySelector(
   ".app__compressed-image__download-button"
@@ -38,17 +42,6 @@ fileInput.onchange = function (e) {
   changeOriginalImage();
 };
 
-// To resize the compressed image
-resizeButton.onmousedown = () => (resizeButton.dataset.clicked = true);
-originalImage.onmouseup = () => (resizeButton.dataset.clicked = false);
-originalImage.onmouseleave = () => (resizeButton.dataset.clicked = false);
-originalImage.onclick = handleResize;
-originalImage.onmousemove = (e) => {
-  if (JSON.parse(resizeButton.dataset.clicked)) {
-    handleResize(e);
-  }
-};
-
 optionsInputs.forEach(
   (input) =>
     (input.onblur = function () {
@@ -66,6 +59,18 @@ optionsInputs.forEach(
     })
 );
 
+// To resize the compressed image
+imagesDiv.onmousedown = () => (imagesDiv.dataset.clicked = true);
+imagesDiv.onmouseup = () => (imagesDiv.dataset.clicked = false);
+imagesDiv.onmouseleave = () => (imagesDiv.dataset.clicked = false);
+imagesDiv.onclick = handleResize;
+imagesDiv.onmousemove = (e) => {
+  if (JSON.parse(imagesDiv.dataset.clicked)) {
+    handleResize(e);
+  }
+};
+imagesDiv.ontouchmove = handleResize;
+
 showMoreButton.onclick = () => {
   moreInputsDiv.classList.toggle("show");
 };
@@ -73,6 +78,7 @@ rangeElem.onmousedown = () => (rangeElem.dataset.clicked = true);
 rangeElem.onmouseup = () => (rangeElem.dataset.clicked = false);
 rangeElem.onmouseleave = () => (rangeElem.dataset.clicked = false);
 rangeElem.onmousemove = handleRangeInputMouseMove;
+
 function handleRangeInputMouseMove(e) {
   if (JSON.parse(rangeElem.dataset.clicked)) handleRangeClick(e);
 }
@@ -107,17 +113,20 @@ function compressImage() {
 }
 
 function handleResize(e) {
-  const rect = originalImage.getBoundingClientRect();
-  const x = rect.right - e.pageX;
-  const width = (100 * x) / rect.width;
-  if (width >= 25 && width <= 100) {
-    compressedImage.style.width = width + "%";
+  if (!e.path.includes(downloadButton)) {
+    if (e.type === "touchmove") e = e.changedTouches[0];
+    const rect = imagesDiv.getBoundingClientRect();
+    const x = rect.right - e.pageX;
+    let width = (100 * x) / rect.width;
+    if (width < 25) width = 25;
+    else if (width > 100) width = 100;
+    compressedImageFrame.style.width = width + "%";
+    resizeButton.style.left = 100 - width + "%";
   }
 }
 
 function changeOriginalImage() {
-  if (!originalImage.classList.contains("show"))
-    originalImage.classList.add("show");
+  if (!imagesDiv.classList.contains("show")) imagesDiv.classList.add("show");
   originalImage.style.backgroundImage = `url("${URL.createObjectURL(file)}")`;
   compressImage();
   setInfo(originalImageInfo, file);
@@ -132,6 +141,7 @@ function setInfo(elem, file) {
       <p>Width: ${image.width}</p>
       <p>Height: ${image.height}</p>
       <p>File Size: ${(file.size / 1024).toFixed(3)} KB</p>
+      <p>File Type: ${file.type}</p>
 
     `;
     elem.innerHTML = html;
@@ -140,6 +150,10 @@ function setInfo(elem, file) {
 
 // This function runs on page load to set default image
 (function () {
+  const imagesDivRect = imagesDiv.getBoundingClientRect();
+  compressedImage.style.width = imagesDivRect.width + "px";
+  // compressedImage.style.height = imagesDivRect.height + "px";
+
   const image = document.querySelector(".dummy-image");
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -148,10 +162,12 @@ function setInfo(elem, file) {
   ctx.drawImage(image, 0, 0, image.width, image.height);
   canvas.toBlob(
     (blob) => {
-      blob.name = "Lanzarote, Spain";
-      file = blob;
-      changeOriginalImage();
-      URL.revokeObjectURL(blob);
+      if (blob) {
+        blob.name = "Lanzarote, Spain";
+        file = blob;
+        changeOriginalImage();
+        URL.revokeObjectURL(blob);
+      }
     },
     "image/png",
     1

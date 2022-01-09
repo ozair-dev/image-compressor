@@ -6,19 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./assets/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="./assets/js/Compressor.js"></script>
+    <script src="./assets/js/main.js" defer></script>
     <title>Image Compressor</title>
   </head>
   <body>
     <div id="app">
       <!-- Div containing original and compressed image -->
-      <div class="app__original-image">
+      <div class="app__images-div" data-clicked="false">
+        <!-- Dummy Image, appears on pageload -->
         <img src="./assets/images/background.jpg" alt="dummy" style="display: none;" class="dummy-image">
-        <div class="app__image-info"></div>
-        <div class="app__compressed-image">
+
+        <div class="app__original-image">
           <div class="app__image-info"></div>
-          <p data-clicked='false' class="app__compressed-image__resize-button"><i class="fas fa-arrows-alt-h"></i></p>
+        </div>
+
+        <div class="app__compressed-image-frame">
+          <div class="app__compressed-image"></div>
+          <div class="app__image-info"></div>
           <a href="" class="app__compressed-image__download-button" download>Download <i class="fas fa-download"></i></a>
         </div>
+        <p class="app__compressed-image-frame__resize-button"><i class="fas fa-arrows-alt-h"></i></p>
       </div>
       <!-- file input -->
       <label for="app__file-input">
@@ -27,11 +35,11 @@
       </label>
       <!-- output file type -->
       <label for="app__output-file-type-input">Output file type
-        <input type="text" name='outputType' class="app__output-file-type-input" list="image-file-types" value="image/png">
+        <input type="text" name='outputType' class="app__output-file-type-input" list="image-file-types" value="image/jpeg">
       </label>
       <datalist id="image-file-types">
+        <option value="image/jpeg"/>
         <option value="image/png"/>
-        <option value="image/jpg"/>
         <option value="image/webp"/>
       </datalist>
       <!-- Range input -->
@@ -41,7 +49,7 @@
 
       <!-- Height and width input -->
       <div class="app__grouped-inputs">
-        <label>Width:
+        <label>Width
           <input name="width" type="number">
         </label>
         <label>Height
@@ -71,7 +79,5 @@
       </div>
       <p class="app__credits">Made with <span>💝</span> by Ozair - <a href="https://github.com/ozair-dev/image-compressor" target="_blank">GitHub</a></p>
     </div>
-    <script src="./assets/js/Compressor.js"></script>
-    <script type="module" src="/main.js" defer></script>
   </body>
 </html>

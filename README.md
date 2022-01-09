@@ -1,5 +1,7 @@
 # image-compressor
 
+See [demo](https://ozair-dev.github.io/image-compressor) here
+
 ![Image Compressor](/assets/images/sample.jpeg "Image Compressor")
 
 ## Getting started
