@@ -38,7 +38,7 @@ const options = { quality: 1, outputType: "image/jpeg" };
 let file;
 
 fileInput.onchange = function (e) {
-  file = e.target.files[0];
+  file = e.target.files[0] || file;
   changeOriginalImage();
 };
 
@@ -78,11 +78,11 @@ rangeElem.onmousedown = () => (rangeElem.dataset.clicked = true);
 rangeElem.onmouseup = () => (rangeElem.dataset.clicked = false);
 rangeElem.onmouseleave = () => (rangeElem.dataset.clicked = false);
 rangeElem.onmousemove = handleRangeInputMouseMove;
+rangeElem.onclick = handleRangeClick;
 
 function handleRangeInputMouseMove(e) {
   if (JSON.parse(rangeElem.dataset.clicked)) handleRangeClick(e);
 }
-rangeElem.onclick = handleRangeClick;
 
 function handleRangeClick(e) {
   const rangeElemRect = rangeElem.getBoundingClientRect();
@@ -152,14 +152,22 @@ function setInfo(elem, file) {
 (function () {
   const imagesDivRect = imagesDiv.getBoundingClientRect();
   compressedImage.style.width = imagesDivRect.width + "px";
-  // compressedImage.style.height = imagesDivRect.height + "px";
 
   const image = document.querySelector(".dummy-image");
+
+  if (image.complete) {
+    showDefaultImages.call(image);
+  } else {
+    image.onload = showDefaultImages;
+  }
+})();
+
+function showDefaultImages() {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
-  canvas.width = image.width;
-  canvas.height = image.height;
-  ctx.drawImage(image, 0, 0, image.width, image.height);
+  canvas.width = this.width;
+  canvas.height = this.height;
+  ctx.drawImage(this, 0, 0, this.width, this.height);
   canvas.toBlob(
     (blob) => {
       if (blob) {
@@ -172,4 +180,4 @@ function setInfo(elem, file) {
     "image/png",
     1
   );
-})();
+}
